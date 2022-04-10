@@ -5,7 +5,7 @@ import GetNews from './getNews';
 
 //The screen for viewing news
 
-const location = {country : 'us', timeZone: 'gmt'};
+const location = {country : 'us', language: 'en'};
 
 const News = () =>{
     return (
