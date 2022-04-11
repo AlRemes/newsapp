@@ -2,13 +2,27 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
 import HomeScreen from './components/HomeScreen';
 import News from './components/News';
+import ReadMore from './components/ReadMore';
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import { NavigationContainer } from'@react-navigation/native';
 import { createBottomTabNavigator } from'@react-navigation/bottom-tabs';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+
+
+const NewsStack = createNativeStackNavigator();
 
 const Tab = createBottomTabNavigator();
+
+function NewsStackScreen() {
+  return (
+    <NewsStack.Navigator screenOptions={{ headerShown: false }}>
+      <NewsStack.Screen name='NewsScreen' component={News} />
+      <NewsStack.Screen name='ReadMore' component={ReadMore} />
+    </NewsStack.Navigator>
+  )
+}
 
 export default function App() {
   return (
@@ -29,7 +43,7 @@ export default function App() {
       })}
       >
         <Tab.Screen name="Home" component={HomeScreen} />
-        <Tab.Screen name="News" component={News}/>
+        <Tab.Screen name="News" component={NewsStackScreen}/>
       </Tab.Navigator>
     </NavigationContainer>
   );
