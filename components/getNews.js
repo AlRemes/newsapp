@@ -8,7 +8,7 @@ import ReadMore from './ReadMore';
 
 //Intented for connecting to API
 
-const GetNews = (props, {navigation}) => {
+const GetNews = (props) => {
 
     const [response, setResponse] = useState([]);
 
@@ -22,7 +22,9 @@ const GetNews = (props, {navigation}) => {
     }
 
     const readMore = () => {
-        navigation.navigate({ReadMore})
+        console.log(props)
+        console.log(props.navigation.navigate)
+        props.navigation.navigate(ReadMore)
     }
 
 return (
@@ -44,7 +46,7 @@ return (
         <Button title='Test' onPress={readMore} />
         </View>
     }
-        keyExctractor={(item, index) => index}
+        keyExctractor={(item, index) => index.toString()}
         />
         
     </View>

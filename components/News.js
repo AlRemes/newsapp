@@ -2,16 +2,22 @@ import React from'react';
 import { View, Text } from'react-native';
 
 import GetNews from './GetNews';
+import Selection from './Selection';
 
 //The screen for viewing news
 
 const location = {country : 'us', language: 'en'};
 
-const News = () =>{
+const News = ( {navigation} ) =>{
     return (
-        <View>
-            {/* Trying to add another component to this one with one object. But I can't get the string us to show. */}
-            <GetNews theseNews={location}/>
+        // Add style, flex for each 
+        <View style={{flex:1}}>
+            <View style={{flex:1}}>
+            <Selection  />
+            </View>
+            <View style={{flex:6}}>
+            <GetNews theseNews={location} navigation={navigation}/>
+            </View>
         </View>
     )
 }
