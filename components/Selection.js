@@ -11,6 +11,8 @@ import { createBottomTabNavigator } from'@react-navigation/bottom-tabs';
 
 const Selection = () => {
 
+    const location = {country : 'us', language: 'en'};
+
     const [selectedValueCat, setSelectedValueCat] = useState('null');
     const [selectedValueLan, setSelectedValueLan] = useState('null');
     const [search, setSearch] = useState('');

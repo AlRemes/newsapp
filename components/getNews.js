@@ -22,6 +22,7 @@ const GetNews = (props) => {
     }
 
     const readMore = (newsData) => {
+        console.log(props.test.selectedValueCat)
         props.navigation.navigate('ReadMore', {newsItem:newsData})
     }
 

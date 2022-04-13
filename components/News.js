@@ -10,13 +10,13 @@ const location = {country : 'us', language: 'en'};
 
 const News = ( {navigation} ) =>{
     return (
-        // Add style, flex for each 
+        // Add style, flex for each to keep the size right in screen 
         <View style={{flex:1}}>
             <View style={{flex:1}}>
             <Selection  />
             </View>
             <View style={{flex:6}}>
-            <GetNews theseNews={location} navigation={navigation}/>
+            <GetNews test={Selection} theseNews={location} navigation={navigation}/>
             </View>
         </View>
     )
