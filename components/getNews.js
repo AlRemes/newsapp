@@ -2,29 +2,51 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, FlatList, Alert, Button, Image } from 'react-native';
 import { useState } from 'react';
 
-import { NavigationContainer, useNavigation } from'@react-navigation/native';
-import { createBottomTabNavigator } from'@react-navigation/bottom-tabs';
-import ReadMore from './ReadMore';
 
 //Intented for connecting to API
 
 const GetNews = (props) => {
 
     const [response, setResponse] = useState([]);
+    const [initial, setInitial] = useState(true);
 
     const news = () => {
-        fetch(`https://newsdata.io/api/1/news?apikey=pub_6122d8d0377c8a84047803176ddbd858a232&country=${props.theseNews.country}&language=${props.theseNews.language}`)
+        fetch(`https://newsdata.io/api/1/news?apikey=pub_6122d8d0377c8a84047803176ddbd858a232&country=${props.theseNews.country}&language=en&category=${props.theseNews.category}`)
         .then(response => response.json())
         .then(data => setResponse(data.results))
         .catch(error => {
             Alert.alert('Error', error)
         })
+        setInitial(false);
     }
 
     const readMore = (newsData) => {
-        console.log(props.test.selectedValueCat)
         props.navigation.navigate('ReadMore', {newsItem:newsData})
     }
+
+    if (initial){
+        return(
+            <View>
+                <Button
+            title='Get news'
+            onPress={news}
+        />
+        <Text>Press button to get news</Text>
+            </View>
+        )
+    }
+
+    if (!response.length) {
+        return (
+            <View>
+                 <Button
+            title='Get news'
+            onPress={news}
+        />
+        <Text>No news right now!</Text>
+            </View>
+        )
+    } else {
 
 return (
     <View>
@@ -39,9 +61,9 @@ return (
         <Text style={styles.header}>{item.title}</Text>
         <Image style={styles.image}
         //No img source is https://www.freeiconspng.com/downloadimg/23485
-        source={ item.image_url!==null ? {uri:item.image_url} : require('./../img/no_img.png')}
+        source={ item.image_url !== null ? {uri:item.image_url} : require('./../img/no_img.png')}
         />
-        <Text style={styles.bodyText} numberOfLines={10}>{item.full_description}</Text>
+        <Text style={styles.bodyText} numberOfLines={10}>{item.description}</Text>
         <Button title='Read more' onPress={() => readMore(item)} />
         </View>
     }
@@ -50,7 +72,7 @@ return (
         
     </View>
 );
-
+}
 }
 
 export default GetNews;

@@ -7,27 +7,28 @@ import { Picker } from '@react-native-picker/picker'
 import { NavigationContainer } from'@react-navigation/native';
 import { createBottomTabNavigator } from'@react-navigation/bottom-tabs';
 
-//To select what kinda moves is looked for
+//To select what kinda news is looked for
 
 const Selection = (props) => {
 
 
     const [selectedValue, setSelectedValue] = useState({
         search: null,
-        category:'null',
-        country:'null'
+        category:null,
+        country:null
     });
     const [search, setSearch] = useState(null);
 
     const setData = (event) =>{
         setSelectedValue({...selectedValue, [event.type]: event.value} )
-  
+        props.getData(selectedValue)
     }
 
     const searchText = () => {
-        console.log(search)
+        console.log(props)
         if(search!==null){
         setSelectedValue({...selectedValue, search:search})
+        props.getData(selectedValue)
     }
     } 
 
