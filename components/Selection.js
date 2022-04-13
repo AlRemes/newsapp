@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, TextInput} from 'react-native';
+import { StyleSheet, Text, View, TextInput, Button} from 'react-native';
 import React, { useState } from 'react';
 
 import { Picker } from '@react-native-picker/picker'
@@ -13,20 +13,24 @@ const Selection = (props) => {
 
 
     const [selectedValue, setSelectedValue] = useState({
+        search: null,
         category:'null',
         country:'null'
     });
-    const [search, setSearch] = useState('');
+    const [search, setSearch] = useState(null);
 
     const setData = (event) =>{
-        console.log(event)
-        setSelectedValue({...selectedValue, [event.target.name]: event.target.value} )
-        console.log(props.getData)
-        props.getData(event)
+        setSelectedValue({...selectedValue, [event.type]: event.value} )
+  
     }
-// Here I'm trying to use usestate object to pass multiple data to parent component
-// It seems like I can only pass the value prop from the picker. How can I get
-// the right name passed for my selectedobject as well?
+
+    const searchText = () => {
+        console.log(search)
+        if(search!==null){
+        setSelectedValue({...selectedValue, search:search})
+    }
+    } 
+
 
 return (
         <View>     
@@ -35,31 +39,35 @@ return (
             placeholder='Search by keyword'
             onChangeText={text => setSearch(text)}
             /> 
+            <Button 
+            title='Search'
+            onPress={() => searchText()}
+            />
             <Picker
         selectedValue={selectedValue.category}
         prompt='Category'
         style={{ height: 50, width: 150 }}
-        onValueChange={(itemValue, itemIndex) => setData(itemValue)}
+        onValueChange={(itemValue, itemIndex) => setData({value:itemValue, type:'category'})}
       > 
-        <Picker.Item label="No Category" value="null" name="category" />
-        <Picker.Item label="Business" value="business" name="category"/>
-        <Picker.Item label="Entertainment" value="entertainment" name="category"/>
-        <Picker.Item label="Environment" value="environment" name="category"/>
-        <Picker.Item label="Food" value="food" name="category"/>
-        <Picker.Item label="Health" value="health" name="category"/>
-        <Picker.Item label="Politics" value="politics" name="category"/>
-        <Picker.Item label="Science" value="science" name="category"/>
-        <Picker.Item label="Sports" value="sports" name="category"/>
-        <Picker.Item label="Technology" value="technology" name="category"/>
-        <Picker.Item label="Top" value="top" name="category"/>
-        <Picker.Item label="World" value="world" name="category"/>
+        <Picker.Item label="No Category" value="null" />
+        <Picker.Item label="Business" value="business" />
+        <Picker.Item label="Entertainment" value="entertainment" />
+        <Picker.Item label="Environment" value="environment" />
+        <Picker.Item label="Food" value="food" />
+        <Picker.Item label="Health" value="health" />
+        <Picker.Item label="Politics" value="politics" />
+        <Picker.Item label="Science" value="science" />
+        <Picker.Item label="Sports" value="sports"/>
+        <Picker.Item label="Technology" value="technology" />
+        <Picker.Item label="Top" value="top"/>
+        <Picker.Item label="World" value="world"/>
         </Picker>
 
             <Picker
         selectedValue={selectedValue.country}
         prompt='Country'
         style={{ height: 50, width: 150 }}
-        onValueChange={(itemValue, itemIndex) => setData(itemValue)}
+        onValueChange={(itemValue, itemIndex) => setData({value:itemValue, type:'country'})}
       > 
         <Picker.Item label="All countries" value="null" />
         <Picker.Item label="Australia" value="au" />
