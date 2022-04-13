@@ -7,11 +7,26 @@ import { createBottomTabNavigator } from'@react-navigation/bottom-tabs';
 
 //Intented for connecting to API
 
-const ReadMore = (props) => {
+const ReadMore = ({route}) => {
+
+    const [newsItem, setNewsItem] = useState(route.params.newsItem)
+
+const show = () => {
+  console.log(newsItem)
+}
 
 return (
     <View>
-        <Text>Hi</Text>
+        <Text>{newsItem.title}</Text>
+        <Image style={styles.image}
+           source={ newsItem.image_url!==null ? {uri:newsItem.image_url} : require('./../img/no_img.png')}
+           />
+        <Text>{newsItem.full_description}</Text>
+        <Button
+        title='Go to source'
+        onPress={show}
+        />
+
     </View>
 );
 
@@ -27,8 +42,9 @@ const styles = StyleSheet.create({
       justifyContent: 'center',
     },
     image:{
-      width:100,
-      height:100,
+      alignContent:'center',
+      width:400,
+      height:300,
     },
     header:{
         fontWeight:'bold',

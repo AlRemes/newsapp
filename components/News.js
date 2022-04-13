@@ -1,7 +1,7 @@
 import React from'react';
 import { View, Text } from'react-native';
 
-import GetNews from './GetNews';
+import GetNews from './GetNews'
 import Selection from './Selection';
 
 //The screen for viewing news

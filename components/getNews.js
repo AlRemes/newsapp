@@ -21,10 +21,8 @@ const GetNews = (props) => {
         })
     }
 
-    const readMore = () => {
-        console.log(props)
-        console.log(props.navigation.navigate)
-        props.navigation.navigate(ReadMore)
+    const readMore = (newsData) => {
+        props.navigation.navigate('ReadMore', {newsItem:newsData})
     }
 
 return (
@@ -43,7 +41,7 @@ return (
         source={ item.image_url!==null ? {uri:item.image_url} : require('./../img/no_img.png')}
         />
         <Text style={styles.bodyText} numberOfLines={10}>{item.full_description}</Text>
-        <Button title='Test' onPress={readMore} />
+        <Button title='Read more' onPress={() => readMore(item)} />
         </View>
     }
         keyExctractor={(item, index) => index.toString()}
