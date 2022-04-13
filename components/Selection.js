@@ -9,14 +9,24 @@ import { createBottomTabNavigator } from'@react-navigation/bottom-tabs';
 
 //To select what kinda moves is looked for
 
-const Selection = () => {
+const Selection = (props) => {
 
-    const location = {country : 'us', language: 'en'};
 
-    const [selectedValueCat, setSelectedValueCat] = useState('null');
-    const [selectedValueLan, setSelectedValueLan] = useState('null');
+    const [selectedValue, setSelectedValue] = useState({
+        category:'null',
+        country:'null'
+    });
     const [search, setSearch] = useState('');
 
+    const setData = (event) =>{
+        console.log(event)
+        setSelectedValue({...selectedValue, [event.target.name]: event.target.value} )
+        console.log(props.getData)
+        props.getData(event)
+    }
+// Here I'm trying to use usestate object to pass multiple data to parent component
+// It seems like I can only pass the value prop from the picker. How can I get
+// the right name passed for my selectedobject as well?
 
 return (
         <View>     
@@ -26,30 +36,30 @@ return (
             onChangeText={text => setSearch(text)}
             /> 
             <Picker
-        selectedValue={selectedValueCat}
+        selectedValue={selectedValue.category}
         prompt='Category'
         style={{ height: 50, width: 150 }}
-        onValueChange={(itemValue, itemIndex) => setSelectedValueCat(itemValue)}
+        onValueChange={(itemValue, itemIndex) => setData(itemValue)}
       > 
-        <Picker.Item label="No Category" value="null" />
-        <Picker.Item label="Business" value="business" />
-        <Picker.Item label="Entertainment" value="entertainment" />
-        <Picker.Item label="Environment" value="environment" />
-        <Picker.Item label="Food" value="food" />
-        <Picker.Item label="Health" value="health" />
-        <Picker.Item label="Politics" value="politics" />
-        <Picker.Item label="Science" value="science" />
-        <Picker.Item label="Sports" value="sports" />
-        <Picker.Item label="Technology" value="technology" />
-        <Picker.Item label="Top" value="top" />
-        <Picker.Item label="World" value="world" />
+        <Picker.Item label="No Category" value="null" name="category" />
+        <Picker.Item label="Business" value="business" name="category"/>
+        <Picker.Item label="Entertainment" value="entertainment" name="category"/>
+        <Picker.Item label="Environment" value="environment" name="category"/>
+        <Picker.Item label="Food" value="food" name="category"/>
+        <Picker.Item label="Health" value="health" name="category"/>
+        <Picker.Item label="Politics" value="politics" name="category"/>
+        <Picker.Item label="Science" value="science" name="category"/>
+        <Picker.Item label="Sports" value="sports" name="category"/>
+        <Picker.Item label="Technology" value="technology" name="category"/>
+        <Picker.Item label="Top" value="top" name="category"/>
+        <Picker.Item label="World" value="world" name="category"/>
         </Picker>
 
             <Picker
-        selectedValue={selectedValueLan}
+        selectedValue={selectedValue.country}
         prompt='Country'
         style={{ height: 50, width: 150 }}
-        onValueChange={(itemValue, itemIndex) => setSelectedValueLan(itemValue)}
+        onValueChange={(itemValue, itemIndex) => setData(itemValue)}
       > 
         <Picker.Item label="All countries" value="null" />
         <Picker.Item label="Australia" value="au" />
