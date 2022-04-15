@@ -19,18 +19,14 @@ const Selection = (props) => {
     });
     const [search, setSearch] = useState(null);
 
-    const setData = (event) =>{
-        setSelectedValue({...selectedValue, [event.type]: event.value} )
-        props.getData(selectedValue)
-    }
-
     const searchText = () => {
-        console.log(props)
-        if(search!==null){
-        setSelectedValue({...selectedValue, search:search})
-        props.getData(selectedValue)
-    }
+        console.log(selectedValue)
     } 
+
+    const changeValue = (item) => {
+        props.getData({value:item.value, type:item.type})
+        setSelectedValue({...selectedValue, [item.type]:item.value})
+    }
 
 
 return (
@@ -38,7 +34,7 @@ return (
             <TextInput style={{borderBottomColor:'grey', borderWidth:1, height:'20%'}}
             textAlign='center'
             placeholder='Search by keyword'
-            onChangeText={text => setSearch(text)}
+            onChangeText={text => changeValue({value:text, type:'search'})}
             /> 
             <Button 
             title='Search'
@@ -48,7 +44,7 @@ return (
         selectedValue={selectedValue.category}
         prompt='Category'
         style={{ height: 50, width: 150 }}
-        onValueChange={(itemValue, itemIndex) => setData({value:itemValue, type:'category'})}
+        onValueChange={(itemValue, itemIndex) => changeValue({value:itemValue, type:'category'})}
       > 
         <Picker.Item label="No Category" value="null" />
         <Picker.Item label="Business" value="business" />
@@ -68,7 +64,7 @@ return (
         selectedValue={selectedValue.country}
         prompt='Country'
         style={{ height: 50, width: 150 }}
-        onValueChange={(itemValue, itemIndex) => setData({value:itemValue, type:'country'})}
+        onValueChange={(itemValue, itemIndex) => changeValue({value:itemValue, type:'country'})}
       > 
         <Picker.Item label="All countries" value="null" />
         <Picker.Item label="Australia" value="au" />

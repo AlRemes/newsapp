@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 
 import { initializeApp, getApps, getApp } from "firebase/app";
 import { getDatabase, push, ref, onValue } from'firebase/database';
+import { stringify } from '@firebase/util';
 
 const GetNews = (props) => {
     
@@ -35,30 +36,64 @@ const saveNews = (news) => {
 
 
     const news = () => {
-        fetch(`https://newsdata.io/api/1/news?apikey=pub_6122d8d0377c8a84047803176ddbd858a232&country=${props.theseNews.country}&language=en&category=${props.theseNews.category}`)
-        .then(response => response.json())
+        let url = 'https://newsdata.io/api/1/news?apikey=pub_6122d8d0377c8a84047803176ddbd858a232&language=en';
+        let category = props.theseNews.category;
+        let country = props.theseNews.country;
+        let search = props.theseNews.search;
+
+        
+
+        if (props.theseNews.category!=null && country == null && (search == null || search == '') ){
+            url += '&category=' + category;
+        }
+
+        if (props.theseNews.category != null && country != null && (search == null || search == '')) {
+            url += '&category=' + category + '&country=' + country
+        }
+
+        if (props.theseNews.category != null && country != null && (search != null && search != '')) {
+            url += '&category=' + category + '&country=' + country + '&q=' +search
+        }
+
+        if (props.theseNews.category == null && country != null && (search == null || search == '')) {
+            url += '&country=' + country
+        }
+
+        if (props.theseNews.category == null && country != null && (search != null && search != '')) {
+            url += '&country=' + country + '&q=' +search
+        }
+        
+        if (props.theseNews.category == null && country == null && (search != null && search != '')) {
+            url += '&q=' + search
+        }
+        console.log(url);
+
+        fetch(url)
+        .then(response => response.json()
+       )
         .then(data => setResponse(data.results))
         .catch(error => {
             Alert.alert('Error', error)
-        })
+        }) 
         setInitial(false);
+    console.log(props.theseNews.category)
     }
 
     const readMore = (newsData) => {
         props.navigation.navigate('ReadMore', {newsItem:newsData})
     }
 
-    if (initial){
-        return(
-            <View>
-                <Button
-            title='Get news'
-            onPress={news}
-        />
-        <Text>Press button to get news!</Text>
-            </View>
-        )
-    }
+    // if (initial){
+    //     return(
+    //         <View>
+    //             <Button
+    //         title='Get news'
+    //         onPress={news}
+    //     />
+    //     <Text>Press button to get news!</Text>
+    //         </View>
+    //     )
+    // }
 return (
     <View>
         <Button 

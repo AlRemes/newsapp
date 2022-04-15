@@ -27,7 +27,7 @@ getApps().length === 0 ? app = initializeApp(firebaseConfig) : app = getApp();
 const database = getDatabase(app);
 
 const showNews = () =>{
-    console.log(news);
+    console.log(Object.values(news));
 }
 
 const readMore = (newsData) => {
@@ -47,7 +47,7 @@ useEffect(() => {
             Object.keys(data).forEach(key => {
                 console.log(key);
             });
-            setNews(data);
+            setNews(Object.values(data));
         })
     }, []);
 
@@ -61,7 +61,7 @@ useEffect(() => {
             onPress={showNews}/>
 
 <FlatList 
-        data={Object.values(news)}
+        data={news}
         renderItem={({item}) =>
         <View>
         <Text style={styles.header}>{item.News.title}</Text>

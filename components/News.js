@@ -18,12 +18,8 @@ const News = ( {navigation} ) =>{
 });
 
 const handleCallBack = (data) => {
-    setDataToShow({
-        search:data.search,
-        category:data.category,
-        country:data.country
-    });
-}
+    setDataToShow({...dataToShow, [data.type] : data.value});
+};
 
     return (
         // Add style, flex for each to keep the size right in screen 
