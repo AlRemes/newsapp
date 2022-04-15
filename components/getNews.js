@@ -1,14 +1,38 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, FlatList, Alert, Button, Image } from 'react-native';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
-
-//Intented for connecting to API
+import { initializeApp, getApps, getApp } from "firebase/app";
+import { getDatabase, push, ref, onValue } from'firebase/database';
 
 const GetNews = (props) => {
+    
+    const firebaseConfig = {
+  apiKey: "AIzaSyCfeJ_4xvVIVpB74bZPm1cKXlGCk7VS_O4",
+  authDomain: "newsapp-e63d8.firebaseapp.com",
+  databaseURL: " https://newsapp-e63d8-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "newsapp-e63d8",
+  storageBucket: "newsapp-e63d8.appspot.com",
+  messagingSenderId: "215531470596",
+  appId: "1:215531470596:web:df6853a0a8b1a458f49a51",
+};
+let app = null;
+// Initialize Firebase
+getApps().length === 0 ? app = initializeApp(firebaseConfig) : app = getApp();
+//const app = initializeApp(firebaseConfig);
+const database = getDatabase(app);
+
+const saveNews = (news) => {
+    push(
+        ref(database, 'news/'),
+        { 'News' : news}
+    );
+    alert('saved')
+}
 
     const [response, setResponse] = useState([]);
     const [initial, setInitial] = useState(true);
+
 
     const news = () => {
         fetch(`https://newsdata.io/api/1/news?apikey=pub_6122d8d0377c8a84047803176ddbd858a232&country=${props.theseNews.country}&language=en&category=${props.theseNews.category}`)
@@ -31,26 +55,13 @@ const GetNews = (props) => {
             title='Get news'
             onPress={news}
         />
-        <Text>Press button to get news</Text>
+        <Text>Press button to get news!</Text>
             </View>
         )
     }
-
-    if (!response.length) {
-        return (
-            <View>
-                 <Button
-            title='Get news'
-            onPress={news}
-        />
-        <Text>No news right now!</Text>
-            </View>
-        )
-    } else {
-
 return (
     <View>
-        <Button
+        <Button 
             title='Get news'
             onPress={news}
         />
@@ -65,6 +76,7 @@ return (
         />
         <Text style={styles.bodyText} numberOfLines={10}>{item.description}</Text>
         <Button title='Read more' onPress={() => readMore(item)} />
+        <Button title='Save this news' onPress={() => saveNews(item)} />
         </View>
     }
         keyExctractor={(item, index) => index.toString()}
@@ -72,7 +84,6 @@ return (
         
     </View>
 );
-}
 }
 
 export default GetNews;

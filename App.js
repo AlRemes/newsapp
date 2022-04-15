@@ -3,6 +3,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import HomeScreen from './components/HomeScreen';
 import News from './components/News';
 import ReadMore from './components/ReadMore';
+import SavedNews from './components/SavedNews';
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
@@ -24,6 +25,15 @@ function NewsStackScreen() {
   )
 }
 
+function SavedNewsStackScreen() {
+  return (
+    <NewsStack.Navigator screenOptions={{ headerShown: false }}>
+      <NewsStack.Screen name='OldNewsScreen' component={SavedNews} />
+      <NewsStack.Screen name='ReadMoreOld' component={ReadMore} />
+    </NewsStack.Navigator>
+  )
+}
+
 export default function App() {
   return (
     <NavigationContainer>
@@ -37,6 +47,8 @@ export default function App() {
           } else if (route.name === 'News'){
             iconName = 'md-newspaper';
             color='red';
+          } else if (route.name === 'Saved'){
+            iconName = 'md-save'
           }
           return <Ionicons name={iconName} size={size} color={color} />;
         },
@@ -44,6 +56,7 @@ export default function App() {
       >
         <Tab.Screen name="Home" component={HomeScreen} />
         <Tab.Screen name="News" component={NewsStackScreen}/>
+        <Tab.Screen name="Saved" component={SavedNewsStackScreen}/>
       </Tab.Navigator>
     </NavigationContainer>
   );

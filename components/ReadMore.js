@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { NavigationContainer } from'@react-navigation/native';
 import { createBottomTabNavigator } from'@react-navigation/bottom-tabs';
 
-//Intented for connecting to API
+//More detailed view of news
 
 const ReadMore = ({route}) => {
 
