@@ -1,10 +1,12 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, FlatList, Alert, Button, Image } from 'react-native';
+import { StyleSheet, View, FlatList,} from 'react-native';
 import { useState, useEffect } from 'react';
 
 import { initializeApp, getApps, getApp } from "firebase/app";
 import { getDatabase, push, ref, onValue } from'firebase/database';
-import { stringify } from '@firebase/util';
+
+import { Skeleton, Button, withTheme, Text, Image, Alert, ListItem, Avatar } from '@rneui/themed';
+
 
 const GetNews = (props) => {
     
@@ -33,9 +35,15 @@ const saveNews = (news) => {
 
     const [response, setResponse] = useState([]);
     const [initial, setInitial] = useState(true);
+    const [modalVisible, setModalVisible] = useState(false);
+    const [initialMessage, setInitialMessage] = useState('Press Get News to get news!')
 
 
-    const news = () => {
+    const news = () => { 
+        setInitial(true);
+        setInitialMessage(
+            'Loading!'
+        );
         let url = 'https://newsdata.io/api/1/news?apikey=pub_6122d8d0377c8a84047803176ddbd858a232&language=en';
         let category = props.theseNews.category;
         let country = props.theseNews.country;
@@ -66,54 +74,140 @@ const saveNews = (news) => {
         if (props.theseNews.category == null && country == null && (search != null && search != '')) {
             url += '&q=' + search
         }
-        console.log(url);
 
         fetch(url)
         .then(response => response.json()
        )
         .then(data => setResponse(data.results))
+        .then(setInitial(false))
         .catch(error => {
             Alert.alert('Error', error)
         }) 
-        setInitial(false);
-    console.log(props.theseNews.category)
+        
     }
 
     const readMore = (newsData) => {
         props.navigation.navigate('ReadMore', {newsItem:newsData})
     }
 
-    // if (initial){
-    //     return(
-    //         <View>
-    //             <Button
-    //         title='Get news'
-    //         onPress={news}
-    //     />
-    //     <Text>Press button to get news!</Text>
-    //         </View>
-    //     )
-    // }
+            //No img source is https://www.freeiconspng.com/downloadimg/23485
+    renderItem = ({ item }) => (
+        <ListItem> 
+            <Avatar source={item.image_url !== null ? {uri:item.image_url} : require('./../img/no_img.png')} />
+            <ListItem.Content>
+                <ListItem.Title>{item.title}</ListItem.Title>
+                <ListItem.Subtitle numberOfLines={10}>{item.description}</ListItem.Subtitle>
+            <Button
+              title="Save this news"
+              icon={{
+                name: 'save',
+                type: 'font-awesome',
+                size: 15,
+                color: 'white',
+              }}
+              iconContainerStyle={{ marginRight: 10 }}
+              titleStyle={{ fontWeight: '700' }}
+              buttonStyle={{
+                backgroundColor: 'rgba(90, 154, 230, 1)',
+                borderColor: 'transparent',
+                borderWidth: 0,
+                borderRadius: 30,
+              }}
+              containerStyle={{
+                width: 200,
+                marginHorizontal: 50,
+                marginVertical: 10,
+              }}
+              onPress={() => readMore(item)}
+        />
+
+                <Button
+              title="Read more"
+              icon={{
+                name: 'arrow-right',
+                type: 'font-awesome',
+                size: 15,
+                color: 'white',
+              }}
+              iconRight
+              iconContainerStyle={{ marginRight: 10 }}
+              titleStyle={{ fontWeight: '700' }}
+              buttonStyle={{
+                backgroundColor: 'rgba(90, 154, 230, 1)',
+                borderColor: 'transparent',
+                borderWidth: 0,
+                borderRadius: 30,
+              }}
+              containerStyle={{
+                width: 200,
+                marginHorizontal: 50,
+                marginVertical: 10,
+              }}
+              onPress={() => saveNews(item)} />
+
+              </ListItem.Content>
+        
+        </ListItem>
+    )
+
+    if (initial){
+        return(
+            <View>
+                <Button
+              title="Get News!"
+              icon={{
+                name: 'bullhorn',
+                type: 'font-awesome',
+                size: 15,
+                color: 'white',
+              }}
+              iconContainerStyle={{ marginRight: 10 }}
+              titleStyle={{ fontWeight: '700' }}
+              buttonStyle={{
+                backgroundColor: 'rgba(90, 154, 230, 1)',
+                borderColor: 'transparent',
+                borderWidth: 0,
+                borderRadius: 30,
+              }}
+              containerStyle={{
+                width: 200,
+                marginHorizontal: 50,
+                marginVertical: 10,
+              }}
+              onPress={news}
+        />
+        <Text>{initialMessage}</Text>
+            </View>
+        )
+    }
 return (
     <View>
-        <Button 
-            title='Get news'
-            onPress={news}
+        <Button
+              title="Get News!"
+              icon={{
+                name: 'bullhorn',
+                type: 'font-awesome',
+                size: 15,
+                color: 'white',
+              }}
+              iconContainerStyle={{ marginRight: 10 }}
+              titleStyle={{ fontWeight: '700' }}
+              buttonStyle={{
+                backgroundColor: 'rgba(90, 154, 230, 1)',
+                borderColor: 'transparent',
+                borderWidth: 0,
+                borderRadius: 30,
+              }}
+              containerStyle={{
+                width: 200,
+                marginHorizontal: 50,
+                marginVertical: 10,
+              }}
+              onPress={news}
         />
         <FlatList 
         data={response}
-        renderItem={({item}) =>
-        <View>
-        <Text style={styles.header}>{item.title}</Text>
-        <Image style={styles.image}
-        //No img source is https://www.freeiconspng.com/downloadimg/23485
-        source={ item.image_url !== null ? {uri:item.image_url} : require('./../img/no_img.png')}
-        />
-        <Text style={styles.bodyText} numberOfLines={10}>{item.description}</Text>
-        <Button title='Read more' onPress={() => readMore(item)} />
-        <Button title='Save this news' onPress={() => saveNews(item)} />
-        </View>
-    }
+        renderItem={renderItem}
         keyExctractor={(item, index) => index.toString()}
         />
         
@@ -138,6 +232,12 @@ const styles = StyleSheet.create({
         fontWeight:'bold',
     },
     bodyText:{
-        fontWeight:'200'
-    }
+        fontWeight:'200',
+    },
+    centeredView: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        marginTop: 22
+      },
   });

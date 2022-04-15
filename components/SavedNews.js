@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from'react';
-import { View, Text, Button, FlatList, StyleSheet } from'react-native';
+import { View, FlatList, StyleSheet } from'react-native';
+
 
 import { initializeApp, getApps, getApp } from "firebase/app";
 import { getDatabase, push, ref, onValue, deleteObject } from'firebase/database';
+
+import { Input, Button, Divider, Text, ListItem } from '@rneui/themed';
 
 
 const SavedNews = (props) =>{    
@@ -51,6 +54,37 @@ useEffect(() => {
         })
     }, []);
 
+    renderItem = ({ item }) => (
+        <ListItem>
+            <ListItem.Content>
+                <ListItem.Title>{item.News.title}</ListItem.Title>
+                <ListItem.Title>{item.News.pubDate}</ListItem.Title>
+                <Button
+              title="Delete from saved"
+              icon={{
+                name: 'remove',
+                type: 'font-awesome',
+                size: 15,
+                color: 'white',
+              }}
+              iconContainerStyle={{ marginRight: 10 }}
+              titleStyle={{ fontWeight: '700' }}
+              buttonStyle={{
+                backgroundColor: 'red',
+                borderColor: 'transparent',
+                borderWidth: 0,
+                borderRadius: 30,
+              }}
+              containerStyle={{
+                width: 200,
+                marginHorizontal: 50,
+                marginVertical: 10,
+              }}
+        />
+            </ListItem.Content>
+        </ListItem>
+    )
+
 //Will show saved news
 
     return (
@@ -62,13 +96,7 @@ useEffect(() => {
 
 <FlatList 
         data={news}
-        renderItem={({item}) =>
-        <View>
-        <Text style={styles.header}>{item.News.title}</Text>
-        <Text style={styles.bodyText} numberOfLines={10}>{item.News.pubDate}</Text>
-        <Button title='Read more' onPress={() => readMore(item)} />
-        <Button title='Delete this news' onPress={() => deleteNews(item)} />
-        </View>}
+        renderItem={renderItem}
         keyExctractor={(item, index) => index.toString()}
         />
             

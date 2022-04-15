@@ -1,6 +1,8 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, TextInput, Button} from 'react-native';
+import { StyleSheet, View,} from 'react-native';
 import React, { useState } from 'react';
+
+import { Input, Button, Divider, Text, SearchBar } from '@rneui/themed';
 
 import { Picker } from '@react-native-picker/picker'
 
@@ -19,10 +21,6 @@ const Selection = (props) => {
     });
     const [search, setSearch] = useState(null);
 
-    const searchText = () => {
-        console.log(selectedValue)
-    } 
-
     const changeValue = (item) => {
         props.getData({value:item.value, type:item.type})
         setSelectedValue({...selectedValue, [item.type]:item.value})
@@ -31,16 +29,26 @@ const Selection = (props) => {
 
 return (
         <View>     
-            <TextInput style={{borderBottomColor:'grey', borderWidth:1, height:'20%'}}
+            <SearchBar style={{borderWidth:1, height:'20%'}}
             textAlign='center'
-            placeholder='Search by keyword'
+            placeholder='Add keyword to filter news'
             onChangeText={text => changeValue({value:text, type:'search'})}
+            value={selectedValue.search}
+            lightTheme={true}
             /> 
-            <Button 
-            title='Search'
-            onPress={() => searchText()}
-            />
-            <Picker
+
+<View style={styles.vertical}>
+        <Text>Category</Text>
+
+        <Divider orientation="vertical" width={1}/>
+
+        <Text>Country</Text>
+
+      </View>
+
+      <View style={styles.vertical}>
+
+      <Picker
         selectedValue={selectedValue.category}
         prompt='Category'
         style={{ height: 50, width: 150 }}
@@ -60,7 +68,9 @@ return (
         <Picker.Item label="World" value="world"/>
         </Picker>
 
-            <Picker
+        <Divider orientation="vertical" width={1} />
+
+        <Picker
         selectedValue={selectedValue.country}
         prompt='Country'
         style={{ height: 50, width: 150 }}
@@ -79,6 +89,7 @@ return (
         <Picker.Item label="United Kingdom" value="gb" />
         <Picker.Item label="United States" value="us" />
         </Picker>
+      </View>
     </View>
 );
 
@@ -101,6 +112,12 @@ const styles = StyleSheet.create({
         fontWeight:'bold',
     },
     bodyText:{
-        fontWeight:'200'
-    }
+        fontWeight:'200',
+    },
+    vertical: {
+        marginBottom: 10,
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-evenly',
+      },
   });

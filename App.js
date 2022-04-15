@@ -6,10 +6,14 @@ import ReadMore from './components/ReadMore';
 import SavedNews from './components/SavedNews';
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { NavigationContainer } from'@react-navigation/native';
 import { createBottomTabNavigator } from'@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+
+import { Header } from '@rneui/themed';
+
 
 
 const NewsStack = createNativeStackNavigator();
@@ -36,6 +40,8 @@ function SavedNewsStackScreen() {
 
 export default function App() {
   return (
+    <SafeAreaProvider>
+
     <NavigationContainer>
       <Tab.Navigator
       screenOptions={({route}) => ({
@@ -58,7 +64,8 @@ export default function App() {
         <Tab.Screen name="News" component={NewsStackScreen}/>
         <Tab.Screen name="Saved" component={SavedNewsStackScreen}/>
       </Tab.Navigator>
-    </NavigationContainer>
+    </NavigationContainer> 
+    </SafeAreaProvider>
   );
 }
 
