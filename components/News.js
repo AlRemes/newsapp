@@ -24,7 +24,7 @@ const handleCallBack = (data) => {
     return (
         // Add style, flex for each to keep the size right in screen 
         <View style={{flex:1}}>
-            <View style={{flex:2}}>
+            <View style={{flex:1.5}}>
             <Selection getData = {handleCallBack} />
             </View>
             <View style={{flex:6}}>

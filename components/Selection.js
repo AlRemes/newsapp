@@ -37,21 +37,21 @@ return (
             lightTheme={true}
             /> 
 
-<View style={styles.vertical}>
-        <Text>Category</Text>
-
-        <Divider orientation="vertical" width={1}/>
-
-        <Text>Country</Text>
-
-      </View>
-
       <View style={styles.vertical}>
+
+      <View
+  style={{flex: 1,
+  justifyContent: 'center',
+  alignItems: 'center',
+  alignSelf: 'stretch',
+  borderWidth: 1,
+  borderRadius: 10
+}}>
 
       <Picker
         selectedValue={selectedValue.category}
         prompt='Category'
-        style={{ height: 50, width: 150 }}
+        style={{ height: 50, width: '100%' }}
         onValueChange={(itemValue, itemIndex) => changeValue({value:itemValue, type:'category'})}
       > 
         <Picker.Item label="No Category" value="null" />
@@ -68,12 +68,22 @@ return (
         <Picker.Item label="World" value="world"/>
         </Picker>
 
+        </View>
+
         <Divider orientation="vertical" width={1} />
 
+        <View
+  style={{flex: 1,
+  justifyContent: 'center',
+  alignItems: 'center',
+  alignSelf: 'stretch',
+  borderWidth: 1,
+  borderRadius: 10
+}}>
         <Picker
         selectedValue={selectedValue.country}
         prompt='Country'
-        style={{ height: 50, width: 150 }}
+        style={{ height: 50, width: '100%',}}
         onValueChange={(itemValue, itemIndex) => changeValue({value:itemValue, type:'country'})}
       > 
         <Picker.Item label="All countries" value="null" />
@@ -89,6 +99,7 @@ return (
         <Picker.Item label="United Kingdom" value="gb" />
         <Picker.Item label="United States" value="us" />
         </Picker>
+        </View>
       </View>
     </View>
 );

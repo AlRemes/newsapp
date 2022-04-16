@@ -1,243 +1,275 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, View, FlatList,} from 'react-native';
-import { useState, useEffect } from 'react';
+import { StatusBar } from "expo-status-bar";
+import { StyleSheet, View, FlatList } from "react-native";
+import { useState, useEffect } from "react";
 
 import { initializeApp, getApps, getApp } from "firebase/app";
-import { getDatabase, push, ref, onValue } from'firebase/database';
+import { getDatabase, push, ref, onValue } from "firebase/database";
 
-import { Skeleton, Button, withTheme, Text, Image, Alert, ListItem, Avatar } from '@rneui/themed';
-
+import {
+  Divider,
+  Skeleton,
+  Button,
+  withTheme,
+  Text,
+  Image,
+  Alert,
+  ListItem,
+  Avatar,
+  Dialog,
+} from "@rneui/themed";
 
 const GetNews = (props) => {
+  const firebaseConfig = {
+    apiKey: "AIzaSyCfeJ_4xvVIVpB74bZPm1cKXlGCk7VS_O4",
+    authDomain: "newsapp-e63d8.firebaseapp.com",
+    databaseURL:
+      " https://newsapp-e63d8-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "newsapp-e63d8",
+    storageBucket: "newsapp-e63d8.appspot.com",
+    messagingSenderId: "215531470596",
+    appId: "1:215531470596:web:df6853a0a8b1a458f49a51",
+  };
+  let app = null;
+  // Initialize Firebase
+  getApps().length === 0
+    ? (app = initializeApp(firebaseConfig))
+    : (app = getApp());
+  //const app = initializeApp(firebaseConfig);
+  const database = getDatabase(app);
+
+  const saveNews = (news) => {
+    push(ref(database, "news/"), { News: news });
+    alert("saved");
+  };
+
+  const [response, setResponse] = useState([]);
+  const [initial, setInitial] = useState(true);
+ 
+  const [visible, setVisible] = useState(false);
+  const toggleDialog = () =>{
+    setVisible(!visible);
+  }
+  const [initialMessage, setInitialMessage] = useState(
+    "Press Get News to get news!"
+  );
+
+  const news = () => {
+    setInitial(true);
+    setVisible(true);
+    let url =
+      "https://newsdata.io/api/1/news?apikey=pub_6122d8d0377c8a84047803176ddbd858a232&language=en";
+    let category = props.theseNews.category;
+    let country = props.theseNews.country;
+    let search = props.theseNews.search;
+
+
+    //have to check string null and not normal null for some reason..
+    if (category !== null && category !== 'null'){
+        console.log(category)
+        url += '&category=' + category;
+        console.log(url)
+    }
+
+    if (country !== null && country !== 'null') {
+        console.log(country)
+        url += '&country=' + country;
+    }
+
+    if (search !== null && search !== '') {
+        console.log(4)
+        url += '&q=' + search
+    }
+
     
-    const firebaseConfig = {
-  apiKey: "AIzaSyCfeJ_4xvVIVpB74bZPm1cKXlGCk7VS_O4",
-  authDomain: "newsapp-e63d8.firebaseapp.com",
-  databaseURL: " https://newsapp-e63d8-default-rtdb.europe-west1.firebasedatabase.app",
-  projectId: "newsapp-e63d8",
-  storageBucket: "newsapp-e63d8.appspot.com",
-  messagingSenderId: "215531470596",
-  appId: "1:215531470596:web:df6853a0a8b1a458f49a51",
-};
-let app = null;
-// Initialize Firebase
-getApps().length === 0 ? app = initializeApp(firebaseConfig) : app = getApp();
-//const app = initializeApp(firebaseConfig);
-const database = getDatabase(app);
+    fetch(url)
+      .then((response) => response.json())
+      .then((data) => setResponse(data.results))
+      .then(setInitial(false))
+      .catch((error) => {
+        Alert.alert("Error", error);
+      });
+      setVisible(false)
+  };
 
-const saveNews = (news) => {
-    push(
-        ref(database, 'news/'),
-        { 'News' : news}
-    );
-    alert('saved')
-}
+  const readMore = (newsData) => {
+    props.navigation.navigate("ReadMore", { newsItem: newsData });
+  };
 
-    const [response, setResponse] = useState([]);
-    const [initial, setInitial] = useState(true);
-    const [modalVisible, setModalVisible] = useState(false);
-    const [initialMessage, setInitialMessage] = useState('Press Get News to get news!')
-
-
-    const news = () => { 
-        setInitial(true);
-        setInitialMessage(
-            'Loading!'
-        );
-        let url = 'https://newsdata.io/api/1/news?apikey=pub_6122d8d0377c8a84047803176ddbd858a232&language=en';
-        let category = props.theseNews.category;
-        let country = props.theseNews.country;
-        let search = props.theseNews.search;
-
-        
-
-        if (props.theseNews.category!=null && country == null && (search == null || search == '') ){
-            url += '&category=' + category;
+  //No img source is https://www.freeiconspng.com/downloadimg/23485
+  renderItem = ({ item }) => (
+    <ListItem>
+      <Avatar
+        style={styles.image}
+        source={
+          item.image_url !== null
+            ? { uri: item.image_url }
+            : require("./../img/no_img.png")
         }
+      />
+      <ListItem.Content>
+        <ListItem.Title>{item.title}</ListItem.Title>
 
-        if (props.theseNews.category != null && country != null && (search == null || search == '')) {
-            url += '&category=' + category + '&country=' + country
-        }
+        <Divider orientation="vertical" width={5} />
 
-        if (props.theseNews.category != null && country != null && (search != null && search != '')) {
-            url += '&category=' + category + '&country=' + country + '&q=' +search
-        }
+        <ListItem.Subtitle numberOfLines={10}>
+          {item.description}
+        </ListItem.Subtitle>
 
-        if (props.theseNews.category == null && country != null && (search == null || search == '')) {
-            url += '&country=' + country
-        }
+        <View style={styles.vertical}>
+          <Button
+            title="Read more"
+            icon={{
+              name: "arrow-right",
+              type: "font-awesome",
+              size: 15,
+              color: "white",
+            }}
+            iconRight
+            iconContainerStyle={{ marginRight: 10 }}
+            titleStyle={{ fontWeight: "700" }}
+            buttonStyle={{
+              backgroundColor: "rgba(90, 154, 230, 1)",
+              borderColor: "transparent",
+              borderWidth: 0,
+              borderRadius: 30,
+            }}
+            containerStyle={{
+              width: '45%',
+              marginHorizontal: 50,
+              marginVertical: 10,
+            }}
+            onPress={() => readMore(item)}
+          />
+          <Divider orientation="vertical" width={1} />
+          <Button
+            title="Save this news"
+            icon={{
+              name: "save",
+              type: "font-awesome",
+              size: 15,
+              color: "white",
+            }}
+            iconContainerStyle={{ marginRight: 10 }}
+            titleStyle={{ fontWeight: "700" }}
+            buttonStyle={{
+              backgroundColor: "rgba(140, 144, 230, 1)",
+              borderColor: "transparent",
+              borderWidth: 0,
+              borderRadius: 30,
+            }}
+            containerStyle={{
+              width: 150,
+              marginHorizontal: 50,
+              marginVertical: 10,
+            }}
+            onPress={() => saveNews(item)}
+          />
+        </View>
+      </ListItem.Content>
+    </ListItem>
+  );
 
-        if (props.theseNews.category == null && country != null && (search != null && search != '')) {
-            url += '&country=' + country + '&q=' +search
-        }
-        
-        if (props.theseNews.category == null && country == null && (search != null && search != '')) {
-            url += '&q=' + search
-        }
+  if (initial) {
+    return (
 
-        fetch(url)
-        .then(response => response.json()
-       )
-        .then(data => setResponse(data.results))
-        .then(setInitial(false))
-        .catch(error => {
-            Alert.alert('Error', error)
-        }) 
-        
-    }
-
-    const readMore = (newsData) => {
-        props.navigation.navigate('ReadMore', {newsItem:newsData})
-    }
-
-            //No img source is https://www.freeiconspng.com/downloadimg/23485
-    renderItem = ({ item }) => (
-        <ListItem> 
-            <Avatar source={item.image_url !== null ? {uri:item.image_url} : require('./../img/no_img.png')} />
-            <ListItem.Content>
-                <ListItem.Title>{item.title}</ListItem.Title>
-                <ListItem.Subtitle numberOfLines={10}>{item.description}</ListItem.Subtitle>
-            <Button
-              title="Save this news"
-              icon={{
-                name: 'save',
-                type: 'font-awesome',
-                size: 15,
-                color: 'white',
-              }}
-              iconContainerStyle={{ marginRight: 10 }}
-              titleStyle={{ fontWeight: '700' }}
-              buttonStyle={{
-                backgroundColor: 'rgba(90, 154, 230, 1)',
-                borderColor: 'transparent',
-                borderWidth: 0,
-                borderRadius: 30,
-              }}
-              containerStyle={{
-                width: 200,
-                marginHorizontal: 50,
-                marginVertical: 10,
-              }}
-              onPress={() => readMore(item)}
-        />
-
-                <Button
-              title="Read more"
-              icon={{
-                name: 'arrow-right',
-                type: 'font-awesome',
-                size: 15,
-                color: 'white',
-              }}
-              iconRight
-              iconContainerStyle={{ marginRight: 10 }}
-              titleStyle={{ fontWeight: '700' }}
-              buttonStyle={{
-                backgroundColor: 'rgba(90, 154, 230, 1)',
-                borderColor: 'transparent',
-                borderWidth: 0,
-                borderRadius: 30,
-              }}
-              containerStyle={{
-                width: 200,
-                marginHorizontal: 50,
-                marginVertical: 10,
-              }}
-              onPress={() => saveNews(item)} />
-
-              </ListItem.Content>
-        
-        </ListItem>
-    )
-
-    if (initial){
-        return(
-            <View>
-                <Button
-              title="Get News!"
-              icon={{
-                name: 'bullhorn',
-                type: 'font-awesome',
-                size: 15,
-                color: 'white',
-              }}
-              iconContainerStyle={{ marginRight: 10 }}
-              titleStyle={{ fontWeight: '700' }}
-              buttonStyle={{
-                backgroundColor: 'rgba(90, 154, 230, 1)',
-                borderColor: 'transparent',
-                borderWidth: 0,
-                borderRadius: 30,
-              }}
-              containerStyle={{
-                width: 200,
-                marginHorizontal: 50,
-                marginVertical: 10,
-              }}
-              onPress={news}
-        />
-        <Text>{initialMessage}</Text>
-            </View>
-        )
-    }
-return (
-    <View>
+      <View style={styles.container}>
+              <Dialog isVisible={visible} onBackdropPress={toggleDialog}>
+      <Dialog.Loading />
+    </Dialog>
         <Button
-              title="Get News!"
-              icon={{
-                name: 'bullhorn',
-                type: 'font-awesome',
-                size: 15,
-                color: 'white',
-              }}
-              iconContainerStyle={{ marginRight: 10 }}
-              titleStyle={{ fontWeight: '700' }}
-              buttonStyle={{
-                backgroundColor: 'rgba(90, 154, 230, 1)',
-                borderColor: 'transparent',
-                borderWidth: 0,
-                borderRadius: 30,
-              }}
-              containerStyle={{
-                width: 200,
-                marginHorizontal: 50,
-                marginVertical: 10,
-              }}
-              onPress={news}
+          title="Get News!"
+          icon={{
+            name: "bullhorn",
+            type: "font-awesome",
+            size: 15,
+            color: "white",
+          }}
+          iconContainerStyle={{ marginRight: 10 }}
+          titleStyle={{ fontWeight: "700" }}
+          buttonStyle={{
+            backgroundColor: "rgba(90, 154, 230, 1)",
+            borderColor: "transparent",
+            borderWidth: 0,
+            borderRadius: 30,
+          }}
+          containerStyle={{
+            width: 200,
+            marginHorizontal: 50,
+            marginVertical: 10,
+          }}
+          onPress={news}
         />
-        <FlatList 
+        <Text style={styles.header}>{initialMessage}</Text>
+      </View>
+    );
+  }
+  return (
+    <View >
+    <Dialog isVisible={visible} onBackdropPress={toggleDialog}>
+      <Dialog.Loading />
+    </Dialog>
+        <View style={styles.container}>
+      <Button 
+        title="Get News!"
+        icon={{
+          name: "bullhorn",
+          type: "font-awesome",
+          size: 30,
+          color: "white",
+        }}
+        iconContainerStyle={{ marginRight: 10 }}
+        titleStyle={{ fontWeight: "700" }}
+        buttonStyle={{
+          backgroundColor: "rgba(90, 154, 230, 1)",
+          borderColor: "transparent",
+          borderWidth: 0,
+          borderRadius: 30,
+        }}
+        containerStyle={{
+          width: 270,
+          marginHorizontal: 100,
+          marginVertical: 20,
+        }}
+        onPress={news}
+      />
+      </View>
+      <FlatList
         data={response}
         renderItem={renderItem}
         keyExctractor={(item, index) => index.toString()}
-        />
-        
+      />
     </View>
-);
-}
+  );
+};
 
 export default GetNews;
 
 const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: '#fff',
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-    image:{
-      width:100,
-      height:100,
-    },
-    header:{
-        fontWeight:'bold',
-    },
-    bodyText:{
-        fontWeight:'200',
-    },
-    centeredView: {
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        marginTop: 22
-      },
-  });
+  container: {
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  image: {
+    width: 75,
+    height: 100,
+  },
+  header: {
+    fontSize:40,
+    textAlign:'center',
+  },
+  bodyText: {
+    fontWeight: "200",
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 22,
+  },
+  vertical: {
+    marginBottom: 10,
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-evenly",
+  },
+});
