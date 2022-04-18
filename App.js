@@ -52,7 +52,6 @@ export default function App() {
             iconName = 'md-home';
           } else if (route.name === 'News'){
             iconName = 'md-newspaper';
-            color='red';
           } else if (route.name === 'Saved'){
             iconName = 'md-save'
           }

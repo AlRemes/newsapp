@@ -57,7 +57,7 @@ const GetNews = (props) => {
     setInitial(true);
     setVisible(true);
     let url =
-      "https://newsdata.io/api/1/news?apikey=pub_6122d8d0377c8a84047803176ddbd858a232&language=en";
+      "https://newsdata.io/api/1/news?apikey=pub_66174091fe7a04f32b72b464153aa5f50fdf&language=en";
     let category = props.theseNews.category;
     let country = props.theseNews.country;
     let search = props.theseNews.search;
@@ -65,27 +65,24 @@ const GetNews = (props) => {
 
     //have to check string null and not normal null for some reason..
     if (category !== null && category !== 'null'){
-        console.log(category)
         url += '&category=' + category;
-        console.log(url)
+
     }
 
     if (country !== null && country !== 'null') {
-        console.log(country)
         url += '&country=' + country;
     }
 
     if (search !== null && search !== '') {
-        console.log(4)
         url += '&q=' + search
     }
 
     
     fetch(url)
-      .then((response) => response.json())
-      .then((data) => setResponse(data.results))
-      .then(setInitial(false))
-      .catch((error) => {
+    .then(response.ok ? (response) => response.json() : console.error('Bad response from provider'))
+    .then((data) => (data) => data.results[5] === null ? setResponse(data.results) : console.error('Couldnt access news'))
+    .then(setInitial(false))
+    .catch((error) => {
         Alert.alert("Error", error);
       });
       setVisible(false)
@@ -96,7 +93,7 @@ const GetNews = (props) => {
   };
 
   //No img source is https://www.freeiconspng.com/downloadimg/23485
-  renderItem = ({ item }) => (
+  const renderItem = ({ item }) => (
     <ListItem>
       <Avatar
         style={styles.image}

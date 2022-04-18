@@ -17,9 +17,6 @@ const SavedNews = (props) => {
 
   const [visible, setVisible] = useState(false);
 
-  const toggleDialog = () => {
-    setVisible(!visible);
-  };
 
   const firebaseConfig = {
     apiKey: "AIzaSyCfeJ_4xvVIVpB74bZPm1cKXlGCk7VS_O4",
@@ -40,7 +37,7 @@ const SavedNews = (props) => {
   const database = getDatabase(app);
 
   const readMore = (newsData) => {
-    props.navigation.navigate("ReadMoreOld", { newsItem: newsData.News });
+    props.navigation.navigate("ReadMoreOld", { newsItem: newsData.body.News });
   };
 
   const confirm = (item) => 
@@ -59,27 +56,32 @@ const SavedNews = (props) => {
   );
 
   const deleteitem = (item) => {
-    ref(database, "news/")
+    console.log(item.key)
+    ref(database, "news/" + item.key ).remove();
   }
 
   useEffect(() => {
     const itemsRef = ref(database, "news/");
 
     onValue(itemsRef, (snapshot) => {
-      const data = snapshot.val();
-      Object.keys(data).forEach((key) => {
-        console.log(key);
-      });
-      setNews(Object.values(data));
+      let list = []
+      snapshot.forEach((child) =>{
+        list.push({
+          key:child.key,
+          body:child.val()
+        })
+      })
+      setNews({values:list});
+      setVisible(true)
     });
   }, []);
 
   const renderItem = ({ item }) => (
-    <ListItem>
+    <ListItem style={{borderBottomWidth: 3, borderColor: 'transparent'}}>
       <ListItem.Content>
-        <ListItem.Title>{item.News.title}</ListItem.Title>
+        <ListItem.Title>{item.body.News.title}</ListItem.Title>
         <Divider orientation="vertical" width={1} />
-        <ListItem.Title style={{textAlign:'center'}}>{item.News.pubDate}</ListItem.Title>
+        <ListItem.Title style={{textAlign:'center'}}>{item.body.News.pubDate}</ListItem.Title>
         <View style={styles.vertical}>
           <Button
             title="Read more"
@@ -136,31 +138,24 @@ const SavedNews = (props) => {
 
   //Will show saved news
 
+  if (!visible){
+    return (<View>
+      <Text style={styles.header}>Loading saved news..</Text>
+    </View>)
+  }
+
   return (
     <View>
       <Text style={styles.header}>Here are your saved news!</Text>
 
       <FlatList
-        data={news}
+        data={news.values}
         renderItem={renderItem}
-        keyExctractor={(item, index) => index.toString()}
-      />
-      <Dialog
-      isVisible={visible}
-      onBackdropPress={toggleDialog}
-    >
-      <Dialog.Title title="Really delete?"/>
-      <Dialog.Actions>
-        <Dialog.Button
-          title="CONFIRM"
-          onPress={() => {
-              return(true)
-          }}
-        />
-        <Dialog.Button title="CANCEL" onPress={toggleDialog} />
-      </Dialog.Actions>
-    </Dialog>
+        keyExctractor={(item) => item.key}
+      />    
+      <Button onPress={() => console.log(news.values)}>Test</Button>
     </View>
+
   );
 };
 
