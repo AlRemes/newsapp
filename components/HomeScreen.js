@@ -15,6 +15,18 @@ const HomeScreen = () => {
   const [response, setResponse] = useState([]);
   const [display, setDisplay] = useState(false);
 
+  const TextType = () =>{
+    if (!response.full_description){
+      if(!response.description){
+        return (<Text style={styles.bodyText}>No text available</Text>)
+      } else {
+        return (<Text style={styles.bodyText}>{response.description}</Text>)
+      }
+    } else {
+      return (<Text style={styles.bodyText}>{response.full_description}</Text>)
+    }
+  }
+
   useEffect(() => {
     fetch(
       "https://newsdata.io/api/1/news?apikey=pub_66174091fe7a04f32b72b464153aa5f50fdf&language=en"
@@ -59,7 +71,7 @@ const HomeScreen = () => {
             }
           />
         </View>
-        <Text style={styles.bodyText}>{response.full_description}</Text>
+        <TextType />
         <Button
           title="Go to source"
           icon={{

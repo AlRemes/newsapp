@@ -57,6 +57,7 @@ const GetNews = (props) => {
   );
 
   const news = () => {
+    setResponse([]);
     setInitial(true);
     setVisible(true);
     setFound('none')
@@ -91,8 +92,13 @@ const GetNews = (props) => {
         }
       })
       .then((_) => {
+        if (found === 'flex'){
+          setInitial(true);
+          setVisible(false);
+        } else{
         setInitial(false);
         setVisible(false);
+      }
       })
       .catch((error) => {
         Alert.alert("Error", error.message);
@@ -207,6 +213,11 @@ const GetNews = (props) => {
           onPress={news}
         />
         <Text style={styles.header}>{initialMessage}</Text>
+        <View style={{ display: found, marginTop:150 }}>
+          <Text style={{color:'red', fontSize:30, textAlign:'center'}}>
+            "No news found... Try different search filters?"
+          </Text>
+        </View>
       </View>
     );
   }
@@ -240,12 +251,6 @@ const GetNews = (props) => {
           }}
           onPress={news}
         />
-
-        <View style={{ display: found }}>
-          <Text style={styles.header}>
-            "No news found... Try different search filters?"
-          </Text>
-        </View>
       </View>
       <FlatList
         data={response}

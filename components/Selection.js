@@ -54,7 +54,7 @@ return (
         style={{ height: 50, width: '100%' }}
         onValueChange={(itemValue, itemIndex) => changeValue({value:itemValue, type:'category'})}
       > 
-        <Picker.Item label="No Category" value="null" />
+        <Picker.Item label="No Category" value={null} />
         <Picker.Item label="Business" value="business" />
         <Picker.Item label="Entertainment" value="entertainment" />
         <Picker.Item label="Environment" value="environment" />
@@ -86,7 +86,7 @@ return (
         style={{ height: 50, width: '100%',}}
         onValueChange={(itemValue, itemIndex) => changeValue({value:itemValue, type:'country'})}
       > 
-        <Picker.Item label="All countries" value="null" />
+        <Picker.Item label="All countries" value={null} />
         <Picker.Item label="Australia" value="au" />
         <Picker.Item label="Brazil" value="br" />
         <Picker.Item label="Canada" value="ca" />
