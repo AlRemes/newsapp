@@ -44,11 +44,14 @@ const GetNews = (props) => {
 
   const [response, setResponse] = useState([]);
   const [initial, setInitial] = useState(true);
- 
+
+  //For showing message incase news aren't found
+  const [found, setFound] = useState("none");
+
   const [visible, setVisible] = useState(false);
-  const toggleDialog = () =>{
+  const toggleDialog = () => {
     setVisible(!visible);
-  }
+  };
   const [initialMessage, setInitialMessage] = useState(
     "Press Get News to get news!"
   );
@@ -56,36 +59,44 @@ const GetNews = (props) => {
   const news = () => {
     setInitial(true);
     setVisible(true);
+    setFound('none')
     let url =
       "https://newsdata.io/api/1/news?apikey=pub_66174091fe7a04f32b72b464153aa5f50fdf&language=en";
     let category = props.theseNews.category;
     let country = props.theseNews.country;
     let search = props.theseNews.search;
 
-
     //have to check string null and not normal null for some reason..
-    if (category !== null && category !== 'null'){
-        url += '&category=' + category;
-
+    if (category) {
+      url += "&category=" + category;
     }
 
-    if (country !== null && country !== 'null') {
-        url += '&country=' + country;
+    if (country) {
+      url += "&country=" + country;
     }
 
-    if (search !== null && search !== '') {
-        url += '&q=' + search
+    if (search) {
+      url += "&q=" + search;
     }
-
-    
     fetch(url)
-    .then(response.ok ? (response) => response.json() : console.error('Bad response from provider'))
-    .then((data) => (data) => data.results[5] === null ? setResponse(data.results) : console.error('Couldnt access news'))
-    .then(setInitial(false))
-    .catch((error) => {
-        Alert.alert("Error", error);
+      .then((response) => {
+        if (!response.ok) throw new Error(response.status);
+        else return response.json();
+      })
+      .then((data) => {
+        if (data.results.length > 0) {
+          setResponse(data.results);
+        } else {
+          setFound("flex");
+        }
+      })
+      .then((_) => {
+        setInitial(false);
+        setVisible(false);
+      })
+      .catch((error) => {
+        Alert.alert("Error", error.message);
       });
-      setVisible(false)
   };
 
   const readMore = (newsData) => {
@@ -131,7 +142,7 @@ const GetNews = (props) => {
               borderRadius: 30,
             }}
             containerStyle={{
-              width: '45%',
+              width: "45%",
               marginHorizontal: 50,
               marginVertical: 10,
             }}
@@ -168,11 +179,10 @@ const GetNews = (props) => {
 
   if (initial) {
     return (
-
       <View style={styles.container}>
-              <Dialog isVisible={visible} onBackdropPress={toggleDialog}>
-      <Dialog.Loading />
-    </Dialog>
+        <Dialog isVisible={visible} onBackdropPress={toggleDialog}>
+          <Dialog.Loading />
+        </Dialog>
         <Button
           title="Get News!"
           icon={{
@@ -201,34 +211,41 @@ const GetNews = (props) => {
     );
   }
   return (
-    <View >
-    <Dialog isVisible={visible} onBackdropPress={toggleDialog}>
-      <Dialog.Loading />
-    </Dialog>
-        <View style={styles.container}>
-      <Button 
-        title="Get News!"
-        icon={{
-          name: "bullhorn",
-          type: "font-awesome",
-          size: 30,
-          color: "white",
-        }}
-        iconContainerStyle={{ marginRight: 10 }}
-        titleStyle={{ fontWeight: "700" }}
-        buttonStyle={{
-          backgroundColor: "rgba(90, 154, 230, 1)",
-          borderColor: "transparent",
-          borderWidth: 0,
-          borderRadius: 30,
-        }}
-        containerStyle={{
-          width: 270,
-          marginHorizontal: 100,
-          marginVertical: 20,
-        }}
-        onPress={news}
-      />
+    <View style={{flex: 1}}>
+      <Dialog isVisible={visible} onBackdropPress={toggleDialog}>
+        <Dialog.Loading />
+      </Dialog>
+
+      <View style={styles.container}>
+        <Button
+          title="Get News!"
+          icon={{
+            name: "bullhorn",
+            type: "font-awesome",
+            size: 30,
+            color: "white",
+          }}
+          iconContainerStyle={{ marginRight: 10 }}
+          titleStyle={{ fontWeight: "700" }}
+          buttonStyle={{
+            backgroundColor: "rgba(90, 154, 230, 1)",
+            borderColor: "transparent",
+            borderWidth: 0,
+            borderRadius: 30,
+          }}
+          containerStyle={{
+            width: 270,
+            marginHorizontal: 100,
+            marginVertical: 20,
+          }}
+          onPress={news}
+        />
+
+        <View style={{ display: found }}>
+          <Text style={styles.header}>
+            "No news found... Try different search filters?"
+          </Text>
+        </View>
       </View>
       <FlatList
         data={response}
@@ -251,8 +268,8 @@ const styles = StyleSheet.create({
     height: 100,
   },
   header: {
-    fontSize:40,
-    textAlign:'center',
+    fontSize: 40,
+    textAlign: "center",
   },
   bodyText: {
     fontWeight: "200",

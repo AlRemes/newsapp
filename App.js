@@ -12,7 +12,10 @@ import { NavigationContainer } from'@react-navigation/native';
 import { createBottomTabNavigator } from'@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-import { Header } from '@rneui/themed';
+import { LogBox } from 'react-native'
+
+//To ignore database warning which is not relevant to this app
+LogBox.ignoreLogs(['Setting a timer for a long period of time'])
 
 
 

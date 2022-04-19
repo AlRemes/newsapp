@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { View, FlatList, StyleSheet, Alert } from "react-native";
 
-import { initializeApp, getApps, getApp } from "firebase/app";
+import { initializeApp, getApps, getApp} from "firebase/app";
 import {
   getDatabase,
   push,
   ref,
   onValue,
-  deleteObject,
+  remove
 } from "firebase/database";
 
 import { Input, Button, Divider, Text, ListItem, Dialog } from "@rneui/themed";
@@ -56,8 +56,11 @@ const SavedNews = (props) => {
   );
 
   const deleteitem = (item) => {
-    console.log(item.key)
-    ref(database, "news/" + item.key ).remove();
+    remove(ref(database, "news/" + item.key )).then(()=> {
+    alert('Deleted news ' + item.body.News.title )})
+      .catch((err) => {
+        alert('Something went wrong')
+      });
   }
 
   useEffect(() => {
@@ -145,15 +148,14 @@ const SavedNews = (props) => {
   }
 
   return (
-    <View>
+    <View style={{flex: 1}}>
       <Text style={styles.header}>Here are your saved news!</Text>
 
       <FlatList
-        data={news.values}
+        data={news.values.reverse()}
         renderItem={renderItem}
         keyExctractor={(item) => item.key}
       />    
-      <Button onPress={() => console.log(news.values)}>Test</Button>
     </View>
 
   );
