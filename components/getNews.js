@@ -1,17 +1,13 @@
-import { StatusBar } from "expo-status-bar";
-import { StyleSheet, View, FlatList } from "react-native";
-import { useState, useEffect } from "react";
+import { StyleSheet, KeyboardAvoidingView, FlatList } from "react-native";
+import { useState } from "react";
 
+import { getDatabase, push, ref } from "firebase/database";
 import { initializeApp, getApps, getApp } from "firebase/app";
-import { getDatabase, push, ref, onValue } from "firebase/database";
 
 import {
   Divider,
-  Skeleton,
   Button,
-  withTheme,
   Text,
-  Image,
   Alert,
   ListItem,
   Avatar,
@@ -57,10 +53,11 @@ const GetNews = (props) => {
   );
 
   const news = () => {
+    console.log(global.apiKey);
     setResponse([]);
     setInitial(true);
     setVisible(true);
-    setFound('none')
+    setFound("none");
     let url =
       "https://newsdata.io/api/1/news?apikey=pub_66174091fe7a04f32b72b464153aa5f50fdf&language=en";
     let category = props.theseNews.category;
@@ -92,16 +89,21 @@ const GetNews = (props) => {
         }
       })
       .then((_) => {
-        if (found === 'flex'){
+        if (found === "flex") {
           setInitial(true);
           setVisible(false);
-        } else{
-        setInitial(false);
-        setVisible(false);
-      }
+        } else {
+          setInitial(false);
+          setVisible(false);
+        }
       })
       .catch((error) => {
-        Alert.alert("Error", error.message);
+        if (error.message === "429") {
+          Alert.alert("Cannot connect to news source right now..");
+          console.log("Too many requests error");
+        } else {
+          Alert.alert("Error", error.message);
+        }
       });
   };
 
@@ -129,7 +131,7 @@ const GetNews = (props) => {
           {item.description}
         </ListItem.Subtitle>
 
-        <View style={styles.vertical}>
+        <KeyboardAvoidingView style={styles.vertical}>
           <Button
             title="Read more"
             icon={{
@@ -178,14 +180,14 @@ const GetNews = (props) => {
             }}
             onPress={() => saveNews(item)}
           />
-        </View>
+        </KeyboardAvoidingView>
       </ListItem.Content>
     </ListItem>
   );
 
   if (initial) {
     return (
-      <View style={styles.container}>
+      <KeyboardAvoidingView style={styles.containerMargin}>
         <Dialog isVisible={visible} onBackdropPress={toggleDialog}>
           <Dialog.Loading />
         </Dialog>
@@ -213,21 +215,21 @@ const GetNews = (props) => {
           onPress={news}
         />
         <Text style={styles.header}>{initialMessage}</Text>
-        <View style={{ display: found, marginTop:150 }}>
-          <Text style={{color:'red', fontSize:30, textAlign:'center'}}>
+        <KeyboardAvoidingView style={{ display: found, marginTop: 150 }}>
+          <Text style={{ color: "red", fontSize: 30, textAlign: "center" }}>
             "No news found... Try different search filters?"
           </Text>
-        </View>
-      </View>
+        </KeyboardAvoidingView>
+      </KeyboardAvoidingView>
     );
   }
   return (
-    <View style={{flex: 1}}>
+    <KeyboardAvoidingView style={{ flex: 1, marginTop:30 }}>
       <Dialog isVisible={visible} onBackdropPress={toggleDialog}>
         <Dialog.Loading />
       </Dialog>
 
-      <View style={styles.container}>
+      <KeyboardAvoidingView style={styles.container}>
         <Button
           title="Get News!"
           icon={{
@@ -251,13 +253,13 @@ const GetNews = (props) => {
           }}
           onPress={news}
         />
-      </View>
+      </KeyboardAvoidingView>
       <FlatList
         data={response}
         renderItem={renderItem}
         keyExctractor={(item, index) => index.toString()}
       />
-    </View>
+    </KeyboardAvoidingView>
   );
 };
 
@@ -267,6 +269,11 @@ const styles = StyleSheet.create({
   container: {
     alignItems: "center",
     justifyContent: "center",
+  },
+  containerMargin:{
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop:50
   },
   image: {
     width: 75,
@@ -279,7 +286,7 @@ const styles = StyleSheet.create({
   bodyText: {
     fontWeight: "200",
   },
-  centeredView: {
+  centeredKeyboardAvoidingView: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",

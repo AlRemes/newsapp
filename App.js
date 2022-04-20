@@ -13,6 +13,7 @@ import { createBottomTabNavigator } from'@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import { LogBox } from 'react-native'
+import Db from './database/Db.js'
 
 //To ignore database warning which is not relevant to this app
 LogBox.ignoreLogs(['Setting a timer for a long period of time'])
@@ -44,9 +45,10 @@ function SavedNewsStackScreen() {
 export default function App() {
   return (
     <SafeAreaProvider>
-
+      {/* <Db/> */}
     <NavigationContainer>
       <Tab.Navigator
+    
       screenOptions={({route}) => ({
         tabBarIcon: ({focused, color, size}) =>{
           let iconName;

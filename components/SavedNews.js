@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { View, FlatList, StyleSheet, Alert } from "react-native";
 
-import { initializeApp, getApps, getApp} from "firebase/app";
+import { initializeApp, getApps, getApp } from "firebase/app";
+
 import {
   getDatabase,
-  push,
   ref,
   onValue,
   remove
@@ -13,11 +13,6 @@ import {
 import { Input, Button, Divider, Text, ListItem, Dialog } from "@rneui/themed";
 
 const SavedNews = (props) => {
-  const [news, setNews] = useState();
-
-  const [visible, setVisible] = useState(false);
-
-
   const firebaseConfig = {
     apiKey: "AIzaSyCfeJ_4xvVIVpB74bZPm1cKXlGCk7VS_O4",
     authDomain: "newsapp-e63d8.firebaseapp.com",
@@ -35,6 +30,9 @@ const SavedNews = (props) => {
     : (app = getApp());
   //const app = initializeApp(firebaseConfig);
   const database = getDatabase(app);
+  const [news, setNews] = useState();
+
+  const [visible, setVisible] = useState(false);
 
   const readMore = (newsData) => {
     props.navigation.navigate("ReadMoreOld", { newsItem: newsData.body.News });
@@ -104,7 +102,7 @@ const SavedNews = (props) => {
               borderRadius: 30,
             }}
             containerStyle={{
-              width: 200,
+              width: '45%',
               marginHorizontal: 50,
               marginVertical: 10,
             }}
@@ -128,7 +126,7 @@ const SavedNews = (props) => {
               borderRadius: 30,
             }}
             containerStyle={{
-              width: 200,
+              width: '45%',
               marginHorizontal: 50,
               marginVertical: 10,
             }}

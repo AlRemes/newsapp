@@ -38,7 +38,11 @@ const HomeScreen = () => {
       .then((data) => setResponse(data.results[Math.floor(Math.random() * 8)]))
       .then((_) => setDisplay("flex"))
       .catch((error) => {
-        Alert.alert("Error", error.message);
+        if(error.message==='429'){
+          Alert.alert('Cannot connect to news source right now..')
+          console.log('Too many requests error')
+        } else{
+        Alert.alert("Error", error.message);}
       });
   }, []);
 
