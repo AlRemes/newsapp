@@ -30,10 +30,10 @@ const GetNews = (props) => {
   getApps().length === 0
     ? (app = initializeApp(firebaseConfig))
     : (app = getApp());
-  //const app = initializeApp(firebaseConfig);
   const database = getDatabase(app);
 
   const saveNews = (news) => {
+    //check if saved
     push(ref(database, "news/"), { News: news });
     alert("saved");
   };
@@ -53,7 +53,6 @@ const GetNews = (props) => {
   );
 
   const news = () => {
-    console.log(global.apiKey);
     setResponse([]);
     setInitial(true);
     setVisible(true);
@@ -64,7 +63,6 @@ const GetNews = (props) => {
     let country = props.theseNews.country;
     let search = props.theseNews.search;
 
-    //have to check string null and not normal null for some reason..
     if (category) {
       url += "&category=" + category;
     }
@@ -117,7 +115,7 @@ const GetNews = (props) => {
       <Avatar
         style={styles.image}
         source={
-          item.image_url !== null
+          item.image_url
             ? { uri: item.image_url }
             : require("./../img/no_img.png")
         }
@@ -257,7 +255,7 @@ const GetNews = (props) => {
       <FlatList
         data={response}
         renderItem={renderItem}
-        keyExctractor={(item, index) => index.toString()}
+        keyExtractor={(item, index) => index.toString()}
       />
     </KeyboardAvoidingView>
   );

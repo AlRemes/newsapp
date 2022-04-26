@@ -22,6 +22,18 @@ const ReadMore = ({ route }) => {
     navigation.goBack();
   };
 
+  const TextType = () =>{
+    if (!newsItem.full_description){
+      if(!newsItem.description){
+        return (<Text style={styles.bodyText}>No text available</Text>)
+      } else {
+        return (<Text style={styles.bodyText}>{newsItem.description}</Text>)
+      }
+    } else {
+      return (<Text style={styles.bodyText}>{newsItem.full_description}</Text>)
+    }
+  }
+
   return (
     <ScrollView
     contentContainerStyle={styles.container}>
@@ -36,15 +48,15 @@ const ReadMore = ({ route }) => {
       <Text style={styles.underHeader}>{newsItem.pubDate}</Text>
       <View>
       <Image
-        style={styles.image}
-        source={
-          newsItem.image_url !== null
-            ? { uri: newsItem.image_url }
-            : require("./../img/no_img.png")
-        }
-      />
+            style={styles.image}
+            source={
+              newsItem.image_url
+                ? { uri: newsItem.image_url }
+                : require("./../img/no_img.png")
+            }
+          />
       </View>
-      <Text style={styles.bodyText}>{newsItem.full_description}</Text>
+        <TextType />
       <Button 
         title="Go to source"
         icon={{
